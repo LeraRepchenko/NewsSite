@@ -1,6 +1,26 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import News, Category
+from .forms import NewsForm
+
+
+def add_news(request):
+
+    form = NewsForm()
+
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES)
+
+        form = NewsForm(request.POST)
+
+        if form.is_valid():
+
+            #news = News.objects.create(**form.cleaned_data)
+            news = form.save
+
+            return redirect('view_news', news_id=news.pk)
+
+    return render(request, 'news/add_news.html', {'form': form})
 
 def view_news(request, news_id):
     #news_item = News.objects.get(pk=news_id)
