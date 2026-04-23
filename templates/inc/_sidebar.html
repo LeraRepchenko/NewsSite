@@ -1,9 +1,58 @@
 {% load news_tags %}
-<div class="list-group">
-    {% get_list_categories as categories %}
-    {% for item in categories %}
-    <a href="{% url 'category' item.pk %}" class="list-group-item list-group-item-action">{{ item.title }}</a>
-    {% endfor %}
+
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-header bg-primary text-white rounded-top-4">
+        <h5 class="mb-0">
+            📂 Категории
+        </h5>
+    </div>
+    <div class="list-group list-group-flush">
+        {% get_list_categories as categories %}
+        {% for item in categories %}
+            <a href="{{ item.get_absolute_url }}"
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <span>
+                    {% if forloop.counter == 1 %}🔥
+                    {% elif forloop.counter == 2 %}⭐
+                    {% elif forloop.counter == 3 %}🚀
+                    {% else %}📄
+                    {% endif %}
+                    {{ item.title }}
+                </span>
+                <span class="badge bg-primary rounded-pill">{{ item.cnt|default:0 }}</span>
+            </a>
+        {% empty %}
+            <div class="list-group-item text-muted text-center">
+                Категории не добавлены
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
-{% show_categories %}
+
+{% if last_news %}
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-success text-white rounded-top-4">
+        <h5 class="mb-0">
+            🔥 Последние новости
+        </h5>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for item in last_news %}
+            <a href="{{ item.get_absolute_url }}"
+               class="list-group-item list-group-item-action">
+                <div class="d-flex flex-column">
+                    <span class="fw-bold">{{ item.title|truncatewords:8 }}</span>
+                    <small class="text-muted">
+                        📅 {{ item.created_at|date:"d.m.Y H:i" }}
+                    </small>
+                    <small class="text-primary">
+                        {{ item.category.title }}
+                    </small>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

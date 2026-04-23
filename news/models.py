@@ -7,7 +7,7 @@ class Category(models.Model):
                              verbose_name='Наименование категории', blank=True)
 
     def get_absolute_url(self):
-        return reverse('view_news', kwargs={'news_id': self.pk})
+        return reverse('category', kwargs={'category_id': self.pk})
 
     def __str__(self):
         return self.title
@@ -28,7 +28,7 @@ class News(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, verbose_name='Категория', )
 
     def get_absolute_url(self):
-        return reverse('view_news', kwargs={'news_id': self.pk})
+        return reverse('view_news', kwargs={'pk': self.pk})
 
     def my_fune(self):
         return "Последние новости"

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }} :: {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-success text-white">
+        <h4 class="mb-0">
+            🔥 {{ title }}
+        </h4>
+    </div>
+    <div class="card-body">
+        {% if last_news %}
+            <div class="list-group list-group-flush">
+                {% for item in last_news %}
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-primary me-2">{{ forloop.counter }}</span>
+                                <a href="{{ item.get_absolute_url }}" class="text-decoration-none">
+                                    {{ item.title }}
+                                </a>
+                            </div>
+                            <small class="text-muted">
+                                {{ item.created_at|date:"d.m.Y H:i" }}
+                            </small>
+                        </div>
+                        <div class="mt-1 small text-muted">
+                            Категория: {{ item.category.title }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted text-center">Новостей пока нет</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
