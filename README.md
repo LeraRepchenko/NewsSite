@@ -1,0 +1,9 @@
+ Лабораторная работа №10 — Обратное разрешение адресов и статика
+В модели Category и News добавили метод get_absolute_url, который возвращает ссылку на объект через reverse. В шаблонах заменили тег url на вызов get_absolute_url. В админке появилась кнопка "Посмотреть на сайте". Создали детальную страницу новости с маршрутом, view-функцией и шаблоном. Вместо News.objects.get использовали get_object_or_404 для возврата ошибки 404 вместо 500. Настроили статику: создали папку static, прописали STATIC_URL, STATIC_ROOT, STATICFILES_DIRS в settings.py. Выполнили collectstatic. Скачали Bootstrap и подключили локально через тег static. Создали свой файл style.css.
+
+ Лабораторная работа №11 — Работа с формами
+Создали файл forms.py и класс NewsForm на основе ModelForm. В форме указали поля title, content, is_published, category, photo. Настроили русские метки через labels и внешний вид через widgets с классом form-control для Bootstrap. Добавили кастомный валидатор clean_title, который проверяет, что заголовок не начинается с цифры. В views.py создали класс CreateNews, который обрабатывает GET и POST запросы. При валидной форме данные сохраняются через form.save. После сохранения происходит редирект на страницу новости.
+
+📋Лабораторная работа №12 — Class-Based Views
+Заменили функции-контроллеры на классы. Вместо index создали класс HomeNews (ListView), который выводит только опубликованные новости. Вместо get_category создали класс NewsByCategory (ListView) с фильтром по категории, добавили allow_empty = False для возврата 404. Вместо view_news создали класс ViewNews (DetailView), настроили context_object_name = 'news_item' и template_name. Вместо add_news создали класс CreateNews (CreateView) с формой NewsForm и редиректом на главную через reverse_lazy. В urls.py во всех маршрутах используется метод as_view(). В модели News параметр в get_absolute_url изменен с news_id на pk. Старые функции закомментированы.
+
