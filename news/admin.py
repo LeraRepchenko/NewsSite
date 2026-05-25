@@ -3,6 +3,11 @@ from unicodedata import category
 
 # Register your models here.
 from .models import News, Category
+from .models import Comment
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('author', 'news', 'created_at')
 
 
 class NewsAdmin(admin.ModelAdmin):

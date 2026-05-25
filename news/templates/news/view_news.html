@@ -31,5 +31,26 @@
             {{ news_item.created_at|date:"Y-m-d H:i:s" }}
         </div>
     </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">💬 Комментарии ({{ news_item.comments.all|length }})</h5>
+        </div>
+        <div class="card-body">
+            {% for comment in news_item.comments.all %}
+                <div class="border-bottom mb-3 pb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>{{ comment.author }}</strong>
+                        <small class="text-muted">{{ comment.created_date|date:"d.m.Y H:i" }}</small>
+                    </div>
+                    <p class="mt-2 mb-0">{{ comment.text|linebreaks }}</p>
+                </div>
+            {% empty %}
+                <p class="text-muted text-center mb-0">Пока нет комментариев. Будьте первым!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
 </div>
 {% endblock %}
