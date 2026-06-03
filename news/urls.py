@@ -11,4 +11,6 @@ urlpatterns = [
     path('news/<int:pk>/', views.ViewNews.as_view(), name='view_news'),
     path('add_news/', views.CreateNews.as_view(), name='add_news'),
     path('last/', views.LastNews.as_view(), name='last_news'),
+    path('test/', views.test_pagination, name='test_pagination'),
+path('news/<int:pk>/delete/', views.DeleteNews.as_view(), name='delete_news'),
 ]

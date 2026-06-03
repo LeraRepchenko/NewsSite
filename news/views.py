@@ -4,47 +4,58 @@ from django.urls import reverse_lazy
 from .models import News, Category
 from .forms import NewsForm
 from django.views.generic import ListView, DetailView, CreateView
+from .utils import MyMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
+from .utils import MyMixin, OrderByDateMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
+
+def test_pagination(request):
+    objects = ["john1", "paul2", "george3", "ringo4", "john5", "paul6", "george7"]
+    paginator = Paginator(objects, 2)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'news/test.html', {'page_obj': page_obj})
 
 
-class HomeNews(ListView):
+class HomeNews(OrderByDateMixin, MyMixin, ListView):
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'
-    # extra_context = {'title': 'Главная страница'}
+    paginate_by = 4
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Главная страница'
+        context['title'] = self.get_upper('Главная страница')
+        context['mixin_prop'] = self.mixin_prop
         context['last_news'] = News.objects.filter(
             is_published=True
         ).order_by('-created_at')[:5]
         return context
 
-    def get_queryset(self):
-        return News.objects.filter(is_published=True)
-
-
-class NewsByCategory(ListView):
+class NewsByCategory(OrderByDateMixin, MyMixin, ListView):
     model = News
     context_object_name = 'news'
     allow_empty = False
-    extra_context = {'title': 'Категория'}
+    paginate_by = 3
+    template_name = 'news/home_news_list.html'
 
     def get_queryset(self):
         return News.objects.filter(
             category_id=self.kwargs['category_id'],
             is_published=True
-        )
+        ).select_related('category')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category = Category.objects.get(pk=self.kwargs['category_id'])
-        context['title'] = category.title
+        context['title'] = self.get_upper(category)
         context['last_news'] = News.objects.filter(
             is_published=True
         ).order_by('-created_at')[:5]
         return context
-
 
 class ViewNews(DetailView):
     model = News
@@ -52,10 +63,12 @@ class ViewNews(DetailView):
     template_name = 'news/view_news.html'
 
 
-class CreateNews(CreateView):
+class CreateNews(LoginRequiredMixin, CreateView):
     form_class = NewsForm
     template_name = 'news/add_news.html'
     success_url = reverse_lazy('home')
+    login_url = '/admin/'
+    # raise_exception = True
 
 
 class LastNews(ListView):
@@ -72,6 +85,15 @@ class LastNews(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Последние новости'
         return context
+
+class DeleteNews(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+        model = News
+        success_url = reverse_lazy('home')
+        template_name = 'news/delete_news.html'
+        raise_exception = True
+
+        def test_func(self):
+            return self.request.user.is_superuser
 
 
 

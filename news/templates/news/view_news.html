@@ -53,4 +53,7 @@
 
 
 </div>
+{% if user.is_superuser %}
+    <a href="{% url 'delete_news' news_item.pk %}" class="btn btn-danger mt-3">Удалить новость</a>
+{% endif %}
 {% endblock %}
